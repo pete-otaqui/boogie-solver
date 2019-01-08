@@ -1,25 +1,24 @@
-export interface IBoard {
+export declare type Board = {
   width: number;
   height: number;
   dice: RolledDice;
-}
+};
+export declare type RolledDice = DieFace[][];
 
-export type RolledDice = DieFace[][];
-
-export interface IPath {
-  letters: IVisibleFace[];
+export declare type Path = {
+  letters: BoardCell[];
   word: string;
-}
+};
 
-export interface IVisibleFace {
+export declare type BoardCell = {
   face: DieFace;
   x: number;
   y: number;
-}
+};
 
-export type Die = DieFace[];
+export declare type Die = DieFace[];
 
-export type DieFace =
+export declare type DieFace =
   | "a"
   | "b"
   | "c"

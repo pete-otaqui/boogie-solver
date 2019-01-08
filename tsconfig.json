@@ -1,14 +1,14 @@
 {
-  "exclude": ["./src/**/*.test.ts"],
-  "include": ["./src/**/*.ts"],
+  "include": ["./src"],
   "compileOnSave": true,
   "compilerOptions": {
-    "declaration": true,
     "module": "commonjs",
     "outDir": "build/",
     "strict": true,
     "target": "es2018",
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "declaration": true,
+    "typeRoots": ["node_modules/@types", "src/types"]
   }
 }

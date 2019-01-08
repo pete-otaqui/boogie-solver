@@ -6,14 +6,24 @@
   "scripts": {
     "build": "tsc",
     "test": "nyc --reporter=lcov --require ts-node/register tape src/**/*.test.{ts,js} | faucet; nyc report ---reporter=text",
+    "test:quick": "ts-node tests.ts",
     "watch": "tsc -w",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
   "nyc": {
+    "all": true,
     "include": [
       "src/**/*.ts",
-      "!src/**/*.test.ts"
+      "!src/**/*.test.ts",
+      "!src/index.ts",
+      "!src/types.ts"
+    ],
+    "exclude": [
+      "build",
+      "coverage",
+      ".nyc_output",
+      "node_modules"
     ],
     "extension": [
       ".ts"
@@ -22,14 +32,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "types": "dist/index.d.ts",
+  "types": "./src/types/index.d.ts",
   "dependencies": {
     "tslint": "^5.12.0",
     "typescript": "^3.2.2"
   },
   "devDependencies": {
+    "@types/glob": "^7.1.1",
     "@types/tape": "^4.2.33",
     "faucet": "0.0.1",
+    "glob": "^7.1.3",
     "nyc": "^13.1.0",
     "prettier": "^1.15.3",
     "tape": "^4.9.2",
