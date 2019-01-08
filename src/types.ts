@@ -1,3 +1,14 @@
+/*
+Why types everywhere rather than the TypeScript recommended Interfaces?
+
+Since you can't actually express everything with an interface that you can with
+a type (or at least I don't see how!) such as a union-of-strings, you have to
+use some types anyway.  Then you end up with ISomeThing and and NotIOtherThing.
+
+For example below, we could have had an interface such as IBoard.  But we could
+*not* have IDieFace (since you can't do string unions).
+*/
+
 export declare type Board = {
   width: number;
   height: number;
