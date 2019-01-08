@@ -1,0 +1,39 @@
+{
+  "name": "node-solver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "nyc --reporter=lcov --require ts-node/register tape src/**/*.test.{ts,js} | faucet; nyc report ---reporter=text",
+    "watch": "tsc -w",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "!src/**/*.test.ts"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/tape": "^4.2.33",
+    "faucet": "0.0.1",
+    "nyc": "^13.1.0",
+    "prettier": "^1.15.3",
+    "tape": "^4.9.2",
+    "ts-node": "^7.0.1",
+    "tslint-config-prettier": "^1.17.0"
+  }
+}
