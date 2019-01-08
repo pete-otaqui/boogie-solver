@@ -12,7 +12,7 @@ export function solve(
     letters: [],
     word: words[0],
   };
-  return [path, path];
+  return [];
 }
 
 export function findNextLetterCells(path: Path, board: Board): BoardCell[] {
