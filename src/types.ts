@@ -10,6 +10,7 @@ For example below, we could have had an interface such as IBoard.  But we could
 */
 
 export declare type Board = {
+  cells: BoardCell[];
   width: number;
   height: number;
   dice: RolledDice;

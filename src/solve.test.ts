@@ -1,15 +1,13 @@
 import tape from "tape";
 
-import { solve, wordIsVaguelyPossible, wordToDieFaces } from "./solve";
-
-const words = ["foo", "bar", "baz", "eck"];
-
-// tape("solve: finds a single word in a set of dice", t => {
-//   const solutions = solve([["f", "o"], ["o", "z"]], words);
-//   t.equal(solutions.length, 1);
-//   t.equal(solutions[0], "foo");
-//   t.end();
-// });
+import { liftDice } from "./board";
+import {
+  findNextLetterCells,
+  solve,
+  wordIsVaguelyPossible,
+  wordToDieFaces,
+} from "./solve";
+import { Path } from "./types";
 
 tape("wordToDieFaces() should get a set of die faces", t => {
   const faces = wordToDieFaces("bar");
@@ -70,3 +68,38 @@ tape("wordIsVaguelyPossible() shouldn't find impossible words by number", t => {
   t.notOk(result);
   t.end();
 });
+
+tape("findNextLetterCells() finds cells in a fresh board", t => {
+  const path: Path = {
+    letters: [],
+    word: "foo",
+  };
+  const board = liftDice([["f", "o"], ["o", "f"]]);
+  const nextCells = findNextLetterCells(path, board);
+  t.equal(nextCells.length, 2);
+  t.equal(nextCells[0].face, "f");
+  t.equal(nextCells[1].face, "f");
+  t.end();
+});
+
+tape("findNextLetterCells() finds cells from an initial path", t => {
+  const path: Path = {
+    letters: [{ face: "f", x: 0, y: 0 }],
+    word: "foo",
+  };
+  const board = liftDice([["f", "o"], ["o", "f"]]);
+  const nextCells = findNextLetterCells(path, board);
+  t.equal(nextCells.length, 2);
+  t.equal(nextCells[0].face, "o");
+  t.equal(nextCells[1].face, "o");
+  t.end();
+});
+
+// const words = ["foo", "bar", "baz", "eck"];
+
+// tape("solve: finds a single word in a set of dice", t => {
+//   const solutions = solve([["f", "o"], ["o", "z"]], words);
+//   t.equal(solutions.length, 1);
+//   t.equal(solutions[0], "foo");
+//   t.end();
+// });

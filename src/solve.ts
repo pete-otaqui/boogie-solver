@@ -1,5 +1,5 @@
-import { liftDice } from "./board";
-import { Board, DieFace, Path, RolledDice } from "./types";
+import { getAdjacentCells, liftDice } from "./board";
+import { Board, BoardCell, DieFace, Path, RolledDice } from "./types";
 import sowpods from "./word-lists/sowpods.json";
 
 export function solve(
@@ -13,6 +13,30 @@ export function solve(
     word: words[0],
   };
   return [path, path];
+}
+
+export function findNextLetterCells(path: Path, board: Board): BoardCell[] {
+  if (path.letters.length > path.word.length - 1) {
+    throw new RangeError("Finding next letter after completion");
+  }
+  const nextLetter = path.word[path.letters.length];
+  let possibleCells;
+  if (path.letters.length === 0) {
+    // at start, can pick anywhere
+    possibleCells = board.cells;
+  } else {
+    // get cells adjacent to last one in path
+    const lastCell = path.letters[path.letters.length - 1];
+    possibleCells = getAdjacentCells(
+      board,
+      lastCell.x,
+      lastCell.y,
+      path.letters,
+    );
+  }
+  return possibleCells.filter((cell: BoardCell) => {
+    return cell.face === nextLetter;
+  });
 }
 
 export function wordToDieFaces(word: string): DieFace[] {

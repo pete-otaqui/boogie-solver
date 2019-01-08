@@ -1,20 +1,30 @@
 import { rollDice } from "./die";
 
-import { Board, BoardCell, RolledDice } from "./types";
+import { Board, BoardCell, DieFace, RolledDice } from "./types";
 
 export function create(width: number, height: number): Board {
-  const board: Board = {
-    dice: rollDice(width, height),
-    height,
-    width,
-  };
-  return board;
+  return liftDice(rollDice(width, height));
 }
 
 export function liftDice(dice: RolledDice): Board {
   const width = dice[0].length;
   const height = dice.length;
+  const cells: BoardCell[] = dice.reduce(
+    (memo: BoardCell[], row: DieFace[], y) => {
+      return memo.concat(
+        row.map((face: DieFace, x) => {
+          return {
+            face,
+            x,
+            y,
+          };
+        }),
+      );
+    },
+    [],
+  );
   return {
+    cells,
     dice,
     height,
     width,
