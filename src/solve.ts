@@ -10,18 +10,34 @@ import {
 } from "./types";
 import sowpods from "./word-lists/sowpods.json";
 
-export function solve(
+export async function solve(
   dice: RolledDice,
   wordlist: string[] = sowpods.words,
 ): Promise<Solution> {
   const board: Board = liftDice(dice);
-  const paths: Path[] = [];
+  let paths: Path[] = [];
+  const chunkSize = 1000;
+  const numberOfChunks = Math.ceil(wordlist.length / chunkSize);
+  for (let i = 0; i < numberOfChunks; i += 1) {
+    const chunkOfWords = wordlist.slice(i * chunkSize, (i + 1) * chunkSize);
+    const chunkOfPaths = await searchForWords(chunkOfWords, board);
+    paths = paths.concat(chunkOfPaths);
+  }
   const words = paths.map(p => p.word);
   return Promise.resolve({
     board,
     paths,
     words,
   });
+}
+
+export function searchForWords(words: string[], board: Board): Promise<Path[]> {
+  let allPaths: Path[] = [];
+  words.forEach(word => {
+    const paths = searchForWord(word, board);
+    allPaths = allPaths.concat(paths);
+  });
+  return Promise.resolve(allPaths);
 }
 
 export function searchForWord(word: string, board: Board): Path[] {
@@ -43,12 +59,8 @@ export function searchForWord(word: string, board: Board): Path[] {
     found,
     inProgress,
   };
-  let count = 0;
   while (pathPair.inProgress.length) {
     pathPair = extendPaths(pathPair, board);
-    if (++count > 1000) {
-      throw new Error("range error");
-    }
   }
   return found;
 }

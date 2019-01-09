@@ -4,11 +4,12 @@ import { liftDice } from "./board";
 import {
   findNextLetterCells,
   searchForWord,
+  searchForWords,
   solve,
   wordIsVaguelyPossible,
   wordToDieFaces,
 } from "./solve";
-import { Path } from "./types";
+import { Path, RolledDice, Solution } from "./types";
 
 tape("wordToDieFaces() should get a set of die faces", t => {
   const faces = wordToDieFaces("bar");
@@ -164,11 +165,45 @@ tape("searchForWord() finds nothing for an impossible word", t => {
   t.equal(paths.length, 0);
   t.end();
 });
-// const words = ["foo", "bar", "baz", "eck"];
 
-// tape("solve: finds a single word in a set of dice", t => {
-//   const solutions = solve([["f", "o"], ["o", "z"]], words);
-//   t.equal(solutions.length, 1);
-//   t.equal(solutions[0], "foo");
-//   t.end();
-// });
+tape("searchForWords(): finds a single word in a board", async t => {
+  const board = liftDice([["f", "o"], ["o", "z"]]);
+  const words = ["foo", "bar", "baz", "eck"];
+  const paths: Path[] = await searchForWords(words, board);
+  t.equal(paths.length, 2);
+  t.equal(paths[0].word, "foo");
+  t.equal(paths[1].word, "foo");
+  t.end();
+});
+
+tape("searchForWords(): finds multiple words in a board", async t => {
+  const board = liftDice([["b", "a"], ["r", "z"]]);
+  const words = ["foo", "bar", "baz", "eck"];
+  const paths: Path[] = await searchForWords(words, board);
+  t.equal(paths.length, 2);
+  // check we found the right thing, order-independently
+  const foundWords = paths.map(p => p.word);
+  t.ok(foundWords.includes("bar"));
+  t.ok(foundWords.includes("baz"));
+  t.end();
+});
+
+tape("solve(): finds a single word in a board", async t => {
+  const dice: RolledDice = [["b", "a"], ["r", "k"]];
+  const words = ["foo", "bar", "baz", "eck"];
+  const solution: Solution = await solve(dice, words);
+  t.equal(solution.words.length, 1);
+  t.equal(solution.words[0], "bar");
+  t.end();
+});
+
+tape("solve(): uses sowpods by default", async t => {
+  const dice: RolledDice = [["b", "a"], ["r", "z"]];
+  const solution: Solution = await solve(dice);
+  const expectedWords = ["ab", "ar", "arb", "ba", "bar", "bra", "za"];
+  t.equal(solution.words.length, expectedWords.length);
+  expectedWords.forEach(word => {
+    t.ok(solution.words.includes(word));
+  });
+  t.end();
+});
