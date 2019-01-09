@@ -69,6 +69,16 @@ tape("wordIsVaguelyPossible() shouldn't find impossible words by number", t => {
   t.end();
 });
 
+tape("wordIsVaguelyPossible() should throw with no word length", t => {
+  t.plan(1);
+  try {
+    wordIsVaguelyPossible("", []);
+  } catch (e) {
+    t.ok(e instanceof RangeError);
+  }
+  t.end();
+});
+
 tape("findNextLetterCells() finds cells in a fresh board", t => {
   const path: Path = {
     letters: [],
@@ -92,6 +102,25 @@ tape("findNextLetterCells() finds cells from an initial path", t => {
   t.equal(nextCells.length, 2);
   t.equal(nextCells[0].face, "o");
   t.equal(nextCells[1].face, "o");
+  t.end();
+});
+
+tape("findNextLetterCells() should throw for an invalid length", t => {
+  t.plan(1);
+  const path: Path = {
+    letters: [
+      { face: "f", x: 0, y: 0 },
+      { face: "o", x: 0, y: 1 },
+      { face: "o", x: 1, y: 1 },
+    ],
+    word: "foo",
+  };
+  const board = liftDice([["f", "o"], ["o", "f"]]);
+  try {
+    findNextLetterCells(path, board);
+  } catch (e) {
+    t.ok(e instanceof RangeError);
+  }
   t.end();
 });
 
