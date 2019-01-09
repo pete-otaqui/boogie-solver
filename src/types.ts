@@ -16,6 +16,13 @@ export declare type Board = {
   height: number;
   width: number;
 };
+
+export declare type Solution = {
+  board: Board;
+  paths: Path[];
+  words: string[];
+};
+
 export declare type RolledDice = DieFace[][];
 
 export declare type Path = {

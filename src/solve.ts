@@ -1,18 +1,27 @@
 import { getAdjacentCells, liftDice } from "./board";
-import { Board, BoardCell, DieFace, Path, PathPair, RolledDice } from "./types";
+import {
+  Board,
+  BoardCell,
+  DieFace,
+  Path,
+  PathPair,
+  RolledDice,
+  Solution,
+} from "./types";
 import sowpods from "./word-lists/sowpods.json";
 
 export function solve(
   dice: RolledDice,
-  words: string[] = sowpods.words,
-): Promise<Path[]> {
+  wordlist: string[] = sowpods.words,
+): Promise<Solution> {
   const board: Board = liftDice(dice);
   const paths: Path[] = [];
-  const path: Path = {
-    letters: [],
-    word: words[0],
-  };
-  return Promise.resolve(paths);
+  const words = paths.map(p => p.word);
+  return Promise.resolve({
+    board,
+    paths,
+    words,
+  });
 }
 
 export function searchForWord(word: string, board: Board): Path[] {
