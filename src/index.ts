@@ -1,7 +1,5 @@
 import { create } from "./board";
+import { rollDice } from "./die";
 import { solve } from "./solve";
 
-export { create, solve };
-
-// tslint:disable-next-line:no-console
-console.log("foo");
+export { create, rollDice, solve };

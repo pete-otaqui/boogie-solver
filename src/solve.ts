@@ -23,7 +23,7 @@ export async function solve(
     const chunkOfPaths = await searchForWords(chunkOfWords, board);
     paths = paths.concat(chunkOfPaths);
   }
-  const words = paths.map(p => p.word);
+  const words = Array.from(new Set(paths.map(p => p.word)));
   return Promise.resolve({
     board,
     paths,
@@ -143,28 +143,15 @@ export function wordIsVaguelyPossible(
   word: string,
   letters: DieFace[],
 ): boolean {
+  // @TODO This should be more optimized, step 1 is not calculating the "counts"
+  // for the letters every time since they will often be the same
   if (!word.length) {
     throw new RangeError("Empty word provided");
   }
   const faces = wordToDieFaces(word);
 
-  const letterFaceCounts: Map<DieFace, number> = letters.reduce(
-    (counter, face) => {
-      const result = counter.get(face) || 0;
-      counter.set(face, result + 1);
-      return counter;
-    },
-    new Map() as Map<DieFace, number>,
-  );
-
-  const wordFaceCounts: Map<DieFace, number> = faces.reduce(
-    (counter, face) => {
-      const result = counter.get(face) || 0;
-      counter.set(face, result + 1);
-      return counter;
-    },
-    new Map() as Map<DieFace, number>,
-  );
+  const letterFaceCounts = faceCounts(letters);
+  const wordFaceCounts = faceCounts(faces);
 
   for (const [face, count] of wordFaceCounts.entries()) {
     const letterCount = letterFaceCounts.get(face) || 0;
@@ -173,4 +160,17 @@ export function wordIsVaguelyPossible(
     }
   }
   return true;
+}
+
+export function faceCounts(faces: DieFace[]): Map<DieFace, number> {
+  // @TODO this should probably be a plain object type, instead of a map
+  // since maps are a lot slower, and this will be a high usage fn.
+  return faces.reduce(
+    (counter, face) => {
+      const result = counter.get(face) || 0;
+      counter.set(face, result + 1);
+      return counter;
+    },
+    new Map() as Map<DieFace, number>,
+  );
 }

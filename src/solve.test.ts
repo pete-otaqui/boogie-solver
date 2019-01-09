@@ -190,6 +190,19 @@ tape("searchForWord() finds a single qu path word in a board", t => {
   t.end();
 });
 
+tape("searchForWord() finds multiple complex paths for a word", t => {
+  const word = "aghast";
+  const board = liftDice([
+    ["a", "g", "h", "a"],
+    ["s", "a", "t", "s"],
+    ["t", "g", "s", "a"],
+    ["a", "g", "h", "a"],
+  ]);
+  const paths = searchForWord(word, board);
+  t.equal(paths.length, 13);
+  t.end();
+});
+
 tape("searchForWords(): finds a single word in a board", async t => {
   const board = liftDice([["f", "o"], ["o", "z"]]);
   const words = ["foo", "bar", "baz", "eck"];

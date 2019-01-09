@@ -7,6 +7,7 @@
     "build": "npm-run-all -s build:clean build:ts",
     "build:clean": "rimraf ./build/",
     "build:ts": "tsc",
+    "demo": "ts-node demo.ts",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "precommit": "npm-run-all -s lint test build",
