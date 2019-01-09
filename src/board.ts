@@ -23,9 +23,11 @@ export function liftDice(dice: RolledDice): Board {
     },
     [],
   );
+  const faces = cells.map(c => c.face);
   return {
     cells,
     dice,
+    faces,
     height,
     width,
   };

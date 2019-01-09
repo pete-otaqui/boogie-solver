@@ -11,15 +11,21 @@ For example below, we could have had an interface such as IBoard.  But we could
 
 export declare type Board = {
   cells: BoardCell[];
-  width: number;
-  height: number;
   dice: RolledDice;
+  faces: DieFace[];
+  height: number;
+  width: number;
 };
 export declare type RolledDice = DieFace[][];
 
 export declare type Path = {
   letters: BoardCell[];
   word: string;
+};
+
+export declare type PathPair = {
+  found: Path[];
+  inProgress: Path[];
 };
 
 export declare type BoardCell = {

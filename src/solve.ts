@@ -1,18 +1,73 @@
 import { getAdjacentCells, liftDice } from "./board";
-import { Board, BoardCell, DieFace, Path, RolledDice } from "./types";
+import { Board, BoardCell, DieFace, Path, PathPair, RolledDice } from "./types";
 import sowpods from "./word-lists/sowpods.json";
 
 export function solve(
   dice: RolledDice,
   words: string[] = sowpods.words,
-): Path[] {
+): Promise<Path[]> {
   const board: Board = liftDice(dice);
-  const paths = [];
+  const paths: Path[] = [];
   const path: Path = {
     letters: [],
     word: words[0],
   };
-  return [];
+  return Promise.resolve(paths);
+}
+
+export function searchForWord(word: string, board: Board): Path[] {
+  const found: Path[] = [];
+  if (!wordIsVaguelyPossible(word, board.faces)) {
+    return found;
+  }
+  const bootstrapPath: Path = {
+    letters: [],
+    word,
+  };
+  const inProgress: Path[] = findNextLetterCells(bootstrapPath, board).map(
+    cell => ({
+      letters: [cell],
+      word,
+    }),
+  );
+  let pathPair: PathPair = {
+    found,
+    inProgress,
+  };
+  let count = 0;
+  while (pathPair.inProgress.length) {
+    pathPair = extendPaths(pathPair, board);
+    if (++count > 1000) {
+      throw new Error("range error");
+    }
+  }
+  return found;
+}
+
+export function extendPaths(pathPair: PathPair, board: Board): PathPair {
+  const { found, inProgress } = pathPair;
+  const newPaths: Path[] = [];
+  inProgress.forEach(path => {
+    const nextLetterCells = findNextLetterCells(path, board);
+    nextLetterCells.forEach(cell => {
+      const success = path.letters.length + 1 === path.word.length;
+      const newPath: Path = {
+        letters: path.letters.concat([cell]),
+        word: path.word,
+      };
+      if (success) {
+        // @TODO don't mutate this?  Seems really extravagant to be cloning
+        // this over and over again
+        found.push(newPath);
+      } else {
+        newPaths.push(newPath);
+      }
+    });
+  });
+  return {
+    found,
+    inProgress: newPaths,
+  };
 }
 
 export function findNextLetterCells(path: Path, board: Board): BoardCell[] {

@@ -3,6 +3,7 @@ import tape from "tape";
 import { liftDice } from "./board";
 import {
   findNextLetterCells,
+  searchForWord,
   solve,
   wordIsVaguelyPossible,
   wordToDieFaces,
@@ -124,6 +125,45 @@ tape("findNextLetterCells() should throw for an invalid length", t => {
   t.end();
 });
 
+tape("searchForWord() finds a single path word in a board", t => {
+  const word = "bar";
+  const board = liftDice([["b", "a"], ["r", "f"]]);
+  const paths = searchForWord(word, board);
+  t.equal(paths.length, 1);
+  t.end();
+});
+
+tape("searchForWord() finds multiple paths for a word in a board", t => {
+  const word = "foo";
+  const board = liftDice([["f", "o"], ["o", "f"]]);
+  const paths = searchForWord(word, board);
+  t.equal(paths.length, 4);
+  t.end();
+});
+
+tape("searchForWord() finds a single path word with multiple starts", t => {
+  const word = "bar";
+  const board = liftDice([["b", "a"], ["r", "f"], ["r", "f"], ["r", "b"]]);
+  const paths = searchForWord(word, board);
+  t.equal(paths.length, 1);
+  t.end();
+});
+
+tape("searchForWord() finds multiple path word with multiple starts", t => {
+  const word = "bar";
+  const board = liftDice([["b", "a"], ["r", "f"], ["r", "a"], ["r", "b"]]);
+  const paths = searchForWord(word, board);
+  t.equal(paths.length, 4);
+  t.end();
+});
+
+tape("searchForWord() finds nothing for an impossible word", t => {
+  const word = "sun";
+  const board = liftDice([["b", "a"], ["r", "f"], ["r", "f"], ["r", "b"]]);
+  const paths = searchForWord(word, board);
+  t.equal(paths.length, 0);
+  t.end();
+});
 // const words = ["foo", "bar", "baz", "eck"];
 
 // tape("solve: finds a single word in a set of dice", t => {
