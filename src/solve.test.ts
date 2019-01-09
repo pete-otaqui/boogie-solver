@@ -83,6 +83,7 @@ tape("wordIsVaguelyPossible() should throw with no word length", t => {
 
 tape("findNextLetterCells() finds cells in a fresh board", t => {
   const path: Path = {
+    faces: wordToDieFaces("foo"),
     letters: [],
     word: "foo",
   };
@@ -96,6 +97,7 @@ tape("findNextLetterCells() finds cells in a fresh board", t => {
 
 tape("findNextLetterCells() finds cells from an initial path", t => {
   const path: Path = {
+    faces: wordToDieFaces("foo"),
     letters: [{ face: "f", x: 0, y: 0 }],
     word: "foo",
   };
@@ -110,6 +112,7 @@ tape("findNextLetterCells() finds cells from an initial path", t => {
 tape("findNextLetterCells() should throw for an invalid length", t => {
   t.plan(1);
   const path: Path = {
+    faces: wordToDieFaces("foo"),
     letters: [
       { face: "f", x: 0, y: 0 },
       { face: "o", x: 0, y: 1 },
@@ -123,6 +126,19 @@ tape("findNextLetterCells() should throw for an invalid length", t => {
   } catch (e) {
     t.ok(e instanceof RangeError);
   }
+  t.end();
+});
+
+tape("findNextLetterCells() finds qu cells in a fresh board", t => {
+  const path: Path = {
+    faces: wordToDieFaces("quiz"),
+    letters: [],
+    word: "quick",
+  };
+  const board = liftDice([["qu", "i", "z"]]);
+  const nextCells = findNextLetterCells(path, board);
+  t.equal(nextCells.length, 1);
+  t.equal(nextCells[0].face, "qu");
   t.end();
 });
 
@@ -166,6 +182,14 @@ tape("searchForWord() finds nothing for an impossible word", t => {
   t.end();
 });
 
+tape("searchForWord() finds a single qu path word in a board", t => {
+  const word = "quiz";
+  const board = liftDice([["qu", "i", "z"]]);
+  const paths = searchForWord(word, board);
+  t.equal(paths.length, 1);
+  t.end();
+});
+
 tape("searchForWords(): finds a single word in a board", async t => {
   const board = liftDice([["f", "o"], ["o", "z"]]);
   const words = ["foo", "bar", "baz", "eck"];
@@ -201,6 +225,17 @@ tape("solve(): uses sowpods by default", async t => {
   const dice: RolledDice = [["b", "a"], ["r", "z"]];
   const solution: Solution = await solve(dice);
   const expectedWords = ["ab", "ar", "arb", "ba", "bar", "bra", "za"];
+  t.equal(solution.words.length, expectedWords.length);
+  expectedWords.forEach(word => {
+    t.ok(solution.words.includes(word));
+  });
+  t.end();
+});
+
+tape("solve(): finds qu dice", async t => {
+  const dice: RolledDice = [["qu", "i"], ["k", "z"]];
+  const solution: Solution = await solve(dice);
+  const expectedWords = ["quiz", "ki"];
   t.equal(solution.words.length, expectedWords.length);
   expectedWords.forEach(word => {
     t.ok(solution.words.includes(word));

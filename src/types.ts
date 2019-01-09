@@ -27,6 +27,7 @@ export declare type RolledDice = DieFace[][];
 
 export declare type Path = {
   letters: BoardCell[];
+  faces: DieFace[];
   word: string;
 };
 

@@ -42,15 +42,18 @@ export function searchForWords(words: string[], board: Board): Promise<Path[]> {
 
 export function searchForWord(word: string, board: Board): Path[] {
   const found: Path[] = [];
+  const faces = wordToDieFaces(word);
   if (!wordIsVaguelyPossible(word, board.faces)) {
     return found;
   }
   const bootstrapPath: Path = {
+    faces,
     letters: [],
     word,
   };
   const inProgress: Path[] = findNextLetterCells(bootstrapPath, board).map(
     cell => ({
+      faces,
       letters: [cell],
       word,
     }),
@@ -71,8 +74,9 @@ export function extendPaths(pathPair: PathPair, board: Board): PathPair {
   inProgress.forEach(path => {
     const nextLetterCells = findNextLetterCells(path, board);
     nextLetterCells.forEach(cell => {
-      const success = path.letters.length + 1 === path.word.length;
+      const success = path.letters.length + 1 === path.faces.length;
       const newPath: Path = {
+        faces: path.faces,
         letters: path.letters.concat([cell]),
         word: path.word,
       };
@@ -95,7 +99,7 @@ export function findNextLetterCells(path: Path, board: Board): BoardCell[] {
   if (path.letters.length > path.word.length - 1) {
     throw new RangeError("Finding next letter after completion");
   }
-  const nextLetter = path.word[path.letters.length];
+  const nextFace = path.faces[path.letters.length];
   let possibleCells;
   if (path.letters.length === 0) {
     // at start, can pick anywhere
@@ -111,7 +115,7 @@ export function findNextLetterCells(path: Path, board: Board): BoardCell[] {
     );
   }
   return possibleCells.filter((cell: BoardCell) => {
-    return cell.face === nextLetter;
+    return cell.face === nextFace;
   });
 }
 
@@ -142,26 +146,31 @@ export function wordIsVaguelyPossible(
   if (!word.length) {
     throw new RangeError("Empty word provided");
   }
-  const letterString = letters.join("");
-  const wordLetters = word.split("").sort();
-  let lastLetter = wordLetters[0];
-  let letterCount = 0;
-  let matches = letterString.match(new RegExp(lastLetter, "g"));
-  for (let i = 0, max = wordLetters.length; i < max; i += 1) {
-    const letter = wordLetters[i];
-    // quick bail
-    if (letters.indexOf(letter as DieFace) === -1) {
+  const faces = wordToDieFaces(word);
+
+  const letterFaceCounts: Map<DieFace, number> = letters.reduce(
+    (counter, face) => {
+      const result = counter.get(face) || 0;
+      counter.set(face, result + 1);
+      return counter;
+    },
+    new Map() as Map<DieFace, number>,
+  );
+
+  const wordFaceCounts: Map<DieFace, number> = faces.reduce(
+    (counter, face) => {
+      const result = counter.get(face) || 0;
+      counter.set(face, result + 1);
+      return counter;
+    },
+    new Map() as Map<DieFace, number>,
+  );
+
+  for (const [face, count] of wordFaceCounts.entries()) {
+    const letterCount = letterFaceCounts.get(face) || 0;
+    if (letterCount < count) {
       return false;
     }
-    if (letter === lastLetter) {
-      letterCount += 1;
-    } else {
-      matches = letterString.match(new RegExp(letter, "g"));
-    }
-    if (!matches || matches.length < letterCount) {
-      return false;
-    }
-    lastLetter = letter;
   }
   return true;
 }
