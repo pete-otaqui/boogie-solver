@@ -1,5 +1,5 @@
 {
-  "name": "node-solver",
+  "name": "boogie-solver",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
