@@ -1,7 +1,7 @@
 import { rollDice, solve } from "./src";
 
 async function demo() {
-  const dice = rollDice(10, 10);
+  const dice = rollDice(4, 4);
   const start = process.hrtime();
   const solution = await solve(dice);
   const end = process.hrtime();
