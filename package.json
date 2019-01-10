@@ -4,9 +4,9 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "build": "npm-run-all -s build:clean build:ts",
+    "build": "npm-run-all -s build:clean build:comile",
     "build:clean": "rimraf ./build/",
-    "build:ts": "tsc",
+    "build:compile": "tsc",
     "demo": "ts-node demo.ts",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
