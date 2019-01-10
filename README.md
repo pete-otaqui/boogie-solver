@@ -46,7 +46,7 @@ async function main() {
     ["r", "e", "a", "s"],
   ];
 
-  const solution = solve(dice);
+  const solution = await solve(dice);
 
   console.log(solution.words.length); // unique words found
   console.log(solution.paths.length); // paths for words found, with positions
@@ -70,10 +70,14 @@ when calling `solve()`:
 ```js
 import { solve } from "boogie-solver";
 
-const dice = [["a", "b", "c"], ["d", "e", "f"]];
-const words = ["cab", "cafe", "deaf"];
+async function main() {
+  const dice = [["a", "b", "c"], ["d", "e", "f"]];
+  const words = ["cab", "cafe", "deaf"];
 
-const solution = solve(dice, words);
+  const solution = await solve(dice, words);
+}
+
+main();
 ```
 
 ## Development Notes
