@@ -66,3 +66,23 @@ export function rollDice(w: number, h: number): DieFace[][] {
       }, [])
   );
 }
+
+export function wordToDieFaces(word: string): DieFace[] {
+  const faces: DieFace[] = [];
+  let i = 0;
+  while (i < word.length) {
+    let letter = word[i];
+    // @TODO this should be generic and automatically sort through the dice
+    // specified.  Maybe some sets have a standalone "q", maybe others have a
+    // different multi-letter face
+    if (letter === "q" && i < word.length - 1) {
+      if (word[i + 1] === "u") {
+        letter = "qu";
+        i += 1;
+      }
+    }
+    faces.push(letter as DieFace);
+    i += 1;
+  }
+  return faces;
+}

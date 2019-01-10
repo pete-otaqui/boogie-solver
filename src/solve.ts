@@ -1,4 +1,5 @@
 import { getAdjacentCells, liftDice } from "./board";
+import { wordToDieFaces } from "./die";
 import {
   Board,
   BoardCell,
@@ -10,6 +11,12 @@ import {
 } from "./types";
 import sowpods from "./word-lists/sowpods.json";
 
+/**
+ * Note this function is somewhat unnecessarily async now, because it's likely
+ * that any solution for parallelising in the future would demand it. For the
+ * sake of a vague example of this, we split the word list into chunks and then
+ * search for the words in each chunk,
+ */
 export async function solve(
   dice: RolledDice,
   wordlist: string[] = sowpods.words,
@@ -31,6 +38,11 @@ export async function solve(
   });
 }
 
+/**
+ * As with `solve()`, this is pointlessly async right now, with a view to being
+ * able to offload the search to some async style in the future without needing
+ * to change the API.
+ */
 export function searchForWords(words: string[], board: Board): Promise<Path[]> {
   let allPaths: Path[] = [];
   words.forEach(word => {
@@ -40,6 +52,11 @@ export function searchForWords(words: string[], board: Board): Promise<Path[]> {
   return Promise.resolve(allPaths);
 }
 
+/**
+ * Unlike `solve()` and `searchForWords()`, this function is synchronous.  It
+ * may be that in the future we would even want a single word search to be async
+ * but since this isn't intended to be a public API, it's not really a problem.
+ */
 export function searchForWord(word: string, board: Board): Path[] {
   const found: Path[] = [];
   const faces = wordToDieFaces(word);
@@ -68,6 +85,14 @@ export function searchForWord(word: string, board: Board): Path[] {
   return found;
 }
 
+/**
+ * Here we do a little mutation of the `found[]` property. This might well be
+ * better avoided, however it seems like a waste to keep cloning an array of the
+ * same objects over and over again, especially if you aren't cloning the refs
+ * inside.
+ * We *don't* mutate the `inProgress[]` property, since we're creating whole
+ * new paths all the time anyway.
+ */
 export function extendPaths(pathPair: PathPair, board: Board): PathPair {
   const { found, inProgress } = pathPair;
   const newPaths: Path[] = [];
@@ -95,6 +120,11 @@ export function extendPaths(pathPair: PathPair, board: Board): PathPair {
   };
 }
 
+/**
+ * Simple pure function to get an array of the next possible cells for a given
+ * path. We look at the next `Face`, based on the length of the `letters` - this
+ * is important to handle multi-letter-faces, i.e. the "qu" die face.
+ */
 export function findNextLetterCells(path: Path, board: Board): BoardCell[] {
   if (path.letters.length > path.word.length - 1) {
     throw new RangeError("Finding next letter after completion");
@@ -117,26 +147,6 @@ export function findNextLetterCells(path: Path, board: Board): BoardCell[] {
   return possibleCells.filter((cell: BoardCell) => {
     return cell.face === nextFace;
   });
-}
-
-export function wordToDieFaces(word: string): DieFace[] {
-  const faces: DieFace[] = [];
-  let i = 0;
-  while (i < word.length) {
-    let letter = word[i];
-    // @TODO this should be generic and automatically sort through the dice
-    // specified.  Maybe some sets have a standalone "q", maybe others have a
-    // different multi-letter face
-    if (letter === "q" && i < word.length - 1) {
-      if (word[i + 1] === "u") {
-        letter = "qu";
-        i += 1;
-      }
-    }
-    faces.push(letter as DieFace);
-    i += 1;
-  }
-  return faces;
 }
 
 export function wordIsVaguelyPossible(
