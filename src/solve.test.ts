@@ -1,5 +1,7 @@
 import tape from "tape";
 
+import sowpods from "./word-lists/sowpods.json";
+
 import { liftDice } from "./board";
 import { wordToDieFaces } from "./die";
 import {
@@ -194,7 +196,7 @@ tape("solve(): finds a single word in a board", async t => {
 
 tape("solve(): uses sowpods by default", async t => {
   const dice: RolledDice = [["b", "a"], ["r", "z"]];
-  const solution: Solution = await solve(dice);
+  const solution: Solution = await solve(dice, sowpods.words);
   const expectedWords = ["ab", "ar", "arb", "ba", "bar", "bra", "za"];
   t.equal(solution.words.length, expectedWords.length);
   expectedWords.forEach(word => {
@@ -205,7 +207,7 @@ tape("solve(): uses sowpods by default", async t => {
 
 tape("solve(): finds qu dice", async t => {
   const dice: RolledDice = [["qu", "i"], ["k", "z"]];
-  const solution: Solution = await solve(dice);
+  const solution: Solution = await solve(dice, sowpods.words);
   const expectedWords = ["quiz", "ki"];
   t.equal(solution.words.length, expectedWords.length);
   expectedWords.forEach(word => {
