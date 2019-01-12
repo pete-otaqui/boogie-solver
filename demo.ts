@@ -1,7 +1,7 @@
-const { rollDice, solve } = require("./build");
+import { rollDice, solve } from "./src";
 
 async function demo() {
-  const dice = rollDice(16, 16);
+  const dice = rollDice(4, 4);
   const start = process.hrtime();
   const solution = await solve(dice);
   const end = process.hrtime();
@@ -17,6 +17,7 @@ Found: ${solution.paths.length} paths
 
 Took: ${end[0] - start[0]}.${end[1]} seconds
 `;
+  // tslint:disable-next-line:no-console
   console.log(str);
 }
 

@@ -1,5 +1,3 @@
-import { cpus } from "os";
-
 import { getAdjacentCells, liftDice } from "./board";
 import { wordToDieFaces } from "./die";
 import {
@@ -11,47 +9,7 @@ import {
   RolledDice,
   Solution,
 } from "./types";
-
-const numCPUs = Math.min(cpus().length, 4);
-
-let useWorkers = false;
-let pWorker: new (
-  arg0: string,
-  arg1: { workerData: { board: Board; words: string[] } },
-) => void;
-let pIsMainThread;
-let pWorkerData;
-let pParentPort;
-
-try {
-  const {
-    Worker,
-    isMainThread,
-    parentPort,
-    workerData,
-    // tslint:disable-next-line:no-var-requires
-  } = require("worker_threads");
-  pWorker = Worker;
-  pIsMainThread = isMainThread;
-  pWorkerData = workerData;
-  pParentPort = parentPort;
-
-  useWorkers = true;
-} catch (e) {
-  // tslint:disable-next-line:no-console
-  console.error("NOT using worker threads");
-}
-
-if (useWorkers) {
-  if (pIsMainThread) {
-    // tslint:disable-next-line:no-console
-    console.log("USING WORKERS");
-  } else {
-    const { words, board } = pWorkerData;
-    const paths = searchForWords(words, board);
-    pParentPort.postMessage(paths);
-  }
-}
+import sowpods from "./word-lists/sowpods.json";
 
 /**
  * Note this function is somewhat unnecessarily async now, because it's likely
@@ -61,73 +19,44 @@ if (useWorkers) {
  */
 export async function solve(
   dice: RolledDice,
-  wordlist: string[],
+  wordlist: string[] = sowpods.words,
 ): Promise<Solution> {
   const board: Board = liftDice(dice);
   let paths: Path[] = [];
-  if (!useWorkers) {
-    const chunkSize = 1000;
-    const numberOfChunks = Math.ceil(wordlist.length / chunkSize);
-    for (let i = 0; i < numberOfChunks; i += 1) {
-      const chunkOfWords = wordlist.slice(i * chunkSize, (i + 1) * chunkSize);
-      const chunkOfPaths = searchForWords(chunkOfWords, board);
-      paths = paths.concat(chunkOfPaths);
-    }
-    const words = Array.from(new Set(paths.map(p => p.word)));
-    return Promise.resolve({
-      board,
-      paths,
-      words,
-    });
-  } else {
-    return new Promise<Solution>((resolve, reject) => {
-      const threads = new Set();
-      const chunkSize = Math.ceil(wordlist.length / numCPUs);
-      for (let i = 0; i < numCPUs; i += 1) {
-        const chunkOfWords = wordlist.slice(i * chunkSize, (i + 1) * chunkSize);
-        const worker = new pWorker(__filename, {
-          workerData: { board, words: chunkOfWords },
-        });
-        threads.add(worker);
-      }
-      for (const worker of threads) {
-        worker.on("error", (err: Error) => {
-          reject(err);
-        });
-        worker.on("message", (workerPaths: Path[]) => {
-          paths = paths.concat(workerPaths);
-        });
-        worker.on("exit", () => {
-          threads.delete(worker);
-          if (threads.size === 0) {
-            const words = Array.from(new Set(paths.map(p => p.word)));
-            const solution: Solution = {
-              board,
-              paths,
-              words,
-            };
-            resolve(solution);
-          }
-        });
-      }
-    });
+  const chunkSize = 1000;
+  const numberOfChunks = Math.ceil(wordlist.length / chunkSize);
+  for (let i = 0; i < numberOfChunks; i += 1) {
+    const chunkOfWords = wordlist.slice(i * chunkSize, (i + 1) * chunkSize);
+    const chunkOfPaths = await searchForWords(chunkOfWords, board);
+    paths = paths.concat(chunkOfPaths);
   }
+  const words = Array.from(new Set(paths.map(p => p.word)));
+  return Promise.resolve({
+    board,
+    paths,
+    words,
+  });
 }
 
 /**
- * Unlike `solve()`, this function is synchronous.  It may be that in the future
- * we would even want a single word search to be async but since this isn't
- * intended to be a public API, it's not really a problem.
+ * As with `solve()`, this is pointlessly async right now, with a view to being
+ * able to offload the search to some async style in the future without needing
+ * to change the API.
  */
-export function searchForWords(words: string[], board: Board): Path[] {
+export function searchForWords(words: string[], board: Board): Promise<Path[]> {
   let allPaths: Path[] = [];
   words.forEach(word => {
     const paths = searchForWord(word, board);
     allPaths = allPaths.concat(paths);
   });
-  return allPaths;
+  return Promise.resolve(allPaths);
 }
 
+/**
+ * Unlike `solve()` and `searchForWords()`, this function is synchronous.  It
+ * may be that in the future we would even want a single word search to be async
+ * but since this isn't intended to be a public API, it's not really a problem.
+ */
 export function searchForWord(word: string, board: Board): Path[] {
   const found: Path[] = [];
   const faces = wordToDieFaces(word);

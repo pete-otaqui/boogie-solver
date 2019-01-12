@@ -4,16 +4,6 @@ A module for solving [Boggle](https://en.wikipedia.org/wiki/Boggle) boards.
 
 The project is written in Typescript, and provides definitions to consumers.
 
-## Threads
-
-Note that, if available, this module will use
-[Worker Threads](https://nodejs.org/api/worker_threads.html). These have a small
-performance improvement on normal 4x4 boards, but the larger the board the
-larger the benefit of using threads.
-
-Informal testing suggests that with boards of 8x8 or more, a 2 times speed up
-can be expected by using threads.
-
 ## Usage
 
 First get the package:
@@ -104,11 +94,7 @@ types for the project - these are manually imported into the other files.
 - `npm run build` - cleans and comiles the project to the `./build/` directory
 - `npm run build:clean` - deletes the `./build/` directory
 - `npm run build:compile` - compiles the typescript to the `./build/` directory
-- `npm run demo` - runs a demo of the module, outputting to the console (note
-  that you need to `build` first)
-- `npm run demo:threads` - runs a demo of the module with threads (if available
-  on your `node` version), outputting to the console (note that you need to
-  `build` first)
+- `npm run demo` - runs a demo of the module, outputting to the console
 - `npm run lint` - runs `tslint` on the source code.
 - `npm run pre-commit` - useful script to use in a git pre-commit hook: runs
   `lint`, `test` and `build` scripts
