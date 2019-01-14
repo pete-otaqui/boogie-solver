@@ -1,9 +1,12 @@
-import { rollDice, solve } from "./src";
+import { rollDice, solveTrie } from "./src";
 
 async function demo() {
   const dice = rollDice(4, 4);
   const start = process.hrtime();
-  const solution = await solve(dice);
+  const solution = await solveTrie(
+    dice,
+    require(`${__dirname}/src/word-lists/sowpods.trie.json`),
+  );
   const end = process.hrtime();
   const str = `
 Board:

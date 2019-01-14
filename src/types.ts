@@ -11,6 +11,7 @@ For example below, we could have had an interface such as IBoard.  But we could
 
 export declare type Board = {
   cells: BoardCell[];
+  cellGrid: BoardCell[][];
   dice: RolledDice;
   faces: DieFace[];
   height: number;
@@ -23,8 +24,15 @@ export declare type Solution = {
   words: string[];
 };
 
+export declare type WordTrie = { [key in DieFace]?: WordTrie } & {
+  _?: boolean;
+};
+
 export declare type RolledDice = DieFace[][];
 
+export declare type PathTrie = {
+  letters: BoardCell[];
+};
 export declare type Path = {
   letters: BoardCell[];
   faces: DieFace[];

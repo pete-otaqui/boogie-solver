@@ -1,4 +1,4 @@
 import { rollDice } from "./die";
-import { solve } from "./solve";
+import { solve, solveTrie } from "./solve";
 
-export { rollDice, solve };
+export { rollDice, solve, solveTrie };
