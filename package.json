@@ -5,9 +5,11 @@
   "repository": "https://github.com/pete-otaqui/boogie-solver.git",
   "main": "build/index.js",
   "scripts": {
-    "build": "npm-run-all -s build:clean build:compile",
+    "build": "npm-run-all -s build:clean build:compile build:json",
     "build:clean": "rimraf ./build/",
     "build:compile": "tsc",
+    "build:json": "cp ./src/word-lists/*.json ./build/word-lists/",
+    "tries": "ts-node build-word-tries.ts",
     "demo": "ts-node demo.ts",
     "lint": "tslint -p tsconfig.json",
     "pre-commit": "npm-run-all -s lint test build",

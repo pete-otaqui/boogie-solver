@@ -1,4 +1,4 @@
-import { getAdjacentCells, liftDice } from "./board";
+import { cellIsInList, getAdjacentCells, getCell, liftDice } from "./board";
 import { wordToDieFaces } from "./die";
 import {
   Board,
@@ -6,10 +6,98 @@ import {
   DieFace,
   Path,
   PathPair,
+  PathTrie,
   RolledDice,
   Solution,
+  WordTrie,
 } from "./types";
 import sowpods from "./word-lists/sowpods.json";
+
+export async function solveTrie(
+  dice: RolledDice,
+  trie: WordTrie,
+): Promise<Solution> {
+  const board = liftDice(dice);
+  let paths: Path[] = [];
+  board.cells.forEach(cell => {
+    const newPaths = solveTrieCell(cell, board, trie);
+    paths = paths.concat(newPaths);
+  });
+  const words = Array.from(new Set(paths.map(p => p.word)));
+  const solution: Solution = {
+    board,
+    paths,
+    words,
+  };
+  return Promise.resolve(solution);
+}
+
+export function solveTrieCell(
+  cell: BoardCell,
+  board: Board,
+  trie: WordTrie,
+): Path[] {
+  const count = 0;
+  const pathTries: BoardCell[][] = [];
+  function _solve(
+    curCell: BoardCell,
+    trieNode: WordTrie,
+    pathTrie: BoardCell[],
+  ) {
+    if (cellIsInList(curCell, pathTrie)) {
+      return;
+    }
+    const curFace = curCell.face;
+    if (typeof trieNode[curFace] === "undefined") {
+      return;
+    }
+    trieNode = trieNode[curFace] as WordTrie;
+    const { x, y } = curCell;
+    const left = x > 0;
+    const right = x < board.width - 1;
+    const up = y > 0;
+    const down = y < board.height - 1;
+    const nextPathTrie = pathTrie.concat([curCell]);
+    if (up && left) {
+      _solve(getCell(board, x - 1, y - 1), trieNode, nextPathTrie);
+    }
+    if (up) {
+      _solve(getCell(board, x + 0, y - 1), trieNode, nextPathTrie);
+    }
+    if (up && right) {
+      _solve(getCell(board, x + 1, y - 1), trieNode, nextPathTrie);
+    }
+    if (left) {
+      _solve(getCell(board, x - 1, y + 0), trieNode, nextPathTrie);
+    }
+    if (right) {
+      _solve(getCell(board, x + 1, y + 0), trieNode, nextPathTrie);
+    }
+    if (down && left) {
+      _solve(getCell(board, x - 1, y + 1), trieNode, nextPathTrie);
+    }
+    if (down) {
+      _solve(getCell(board, x + 0, y + 1), trieNode, nextPathTrie);
+    }
+    if (down && right) {
+      _solve(getCell(board, x + 1, y + 1), trieNode, nextPathTrie);
+    }
+    if (trieNode._) {
+      pathTries.push(pathTrie.concat([curCell]));
+    }
+  }
+  _solve(cell, trie, []);
+  return pathTries.map(pt => {
+    const letters = pt;
+    const faces = letters.map(bc => bc.face);
+    const word = faces.join("");
+    return {
+      faces,
+      letters,
+      word,
+    };
+  });
+}
 
 /**
  * Note this function is somewhat unnecessarily async now, because it's likely
@@ -19,7 +107,7 @@ import sowpods from "./word-lists/sowpods.json";
  */
 export async function solve(
   dice: RolledDice,
-  wordlist: string[] = sowpods.words,
+  wordlist: string[] = sowpods,
 ): Promise<Solution> {
   const board: Board = liftDice(dice);
   let paths: Path[] = [];

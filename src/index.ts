@@ -1,4 +1,9 @@
 import { rollDice } from "./die";
-import { solve } from "./solve";
+import { solve, solveTrie } from "./solve";
 
-export { rollDice, solve };
+// tslint:disable-next-line:no-var-requires
+const sowpodsTrie = require(`${__dirname}/word-lists/sowpods.trie.json`);
+// tslint:disable-next-line:no-var-requires
+const oedTrie = require(`${__dirname}/word-lists/oed.trie.json`);
+
+export { rollDice, solve, solveTrie, sowpodsTrie, oedTrie };

@@ -1,9 +1,9 @@
-import { rollDice, solve } from "./src";
+import { rollDice, solveTrie, sowpodsTrie } from "./src";
 
 async function demo() {
   const dice = rollDice(4, 4);
   const start = process.hrtime();
-  const solution = await solve(dice);
+  const solution = await solveTrie(dice, sowpodsTrie);
   const end = process.hrtime();
   const str = `
 Board:

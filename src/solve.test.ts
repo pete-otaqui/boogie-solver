@@ -7,9 +7,11 @@ import {
   searchForWord,
   searchForWords,
   solve,
+  solveTrie,
+  solveTrieCell,
   wordIsVaguelyPossible,
 } from "./solve";
-import { Path, RolledDice, Solution } from "./types";
+import { Path, RolledDice, Solution, WordTrie } from "./types";
 
 tape("wordIsVaguelyPossible() should find possible words", t => {
   const result = wordIsVaguelyPossible("foo", ["f", "f", "o", "o"]);
@@ -211,5 +213,62 @@ tape("solve(): finds qu dice", async t => {
   expectedWords.forEach(word => {
     t.ok(solution.words.includes(word));
   });
+  t.end();
+});
+
+tape("solveTrie() solves by trie", async t => {
+  const dice: RolledDice = [["a", "a"], ["p", "t"]];
+  const trie = require(`${__dirname}/word-lists/sowpods.trie.json`);
+  const solution = await solveTrie(dice, trie);
+  t.equal(solution.words.length, 9);
+  t.equal(solution.paths.length, 18);
+  t.end();
+});
+
+tape("solveTrieCell() solves by trie", t => {
+  const board = liftDice([["a", "a"], ["p", "t"]]);
+  const cell = board.cellGrid[0][0];
+  const trie: WordTrie = {
+    a: {
+      p: {
+        a: { _: true },
+        t: { _: true },
+      },
+    },
+  };
+  const paths = solveTrieCell(cell, board, trie);
+  t.equal(paths.length, 2);
+  t.end();
+});
+
+tape("solveTrieCell() solves by trie with qu", t => {
+  const board = liftDice([["qu", "i"], ["p", "t"]]);
+  const cell = board.cellGrid[0][0];
+  const trie: WordTrie = {
+    qu: {
+      i: {
+        p: { _: true },
+        t: { _: true },
+      },
+    },
+  };
+  const paths = solveTrieCell(cell, board, trie);
+  t.equal(paths.length, 2);
+  t.end();
+});
+
+tape("solveTrieCell() solves by trie with qu with invalid letters", t => {
+  const board = liftDice([["qu", "i"], ["p", "c"]]);
+  const cell = board.cellGrid[0][0];
+  const trie: WordTrie = {
+    qu: {
+      i: {
+        p: { _: true },
+        t: { _: true },
+      },
+    },
+  };
+  const paths = solveTrieCell(cell, board, trie);
+  t.equal(paths.length, 1);
   t.end();
 });

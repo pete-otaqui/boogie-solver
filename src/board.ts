@@ -9,6 +9,7 @@ export function create(width: number, height: number): Board {
 export function liftDice(dice: RolledDice): Board {
   const width = dice[0].length;
   const height = dice.length;
+  const cellGrid = dice.map((row, y) => row.map((face, x) => ({ face, x, y })));
   const cells: BoardCell[] = dice.reduce(
     (memo: BoardCell[], row: DieFace[], y) => {
       return memo.concat(
@@ -25,12 +26,17 @@ export function liftDice(dice: RolledDice): Board {
   );
   const faces = cells.map(c => c.face);
   return {
+    cellGrid,
     cells,
     dice,
     faces,
     height,
     width,
   };
+}
+
+export function getCell(board: Board, x: number, y: number): BoardCell {
+  return board.cellGrid[y][x];
 }
 
 export function cellIsInList(cell: BoardCell, list: BoardCell[]): boolean {
