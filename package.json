@@ -13,7 +13,7 @@
     "pre-commit": "npm-run-all -s lint test build",
     "test": "nyc --reporter=lcov --require ts-node/register tape tests.ts | faucet; nyc report ---reporter=text",
     "test:quick": "ts-node tests.ts",
-    "test:unit": "nyc --reporter=lcov --require ts-node/register tape tests.ts | tap-junit --output test-results --name tape.xml"
+    "test:unit": "nyc --reporter=lcov --require ts-node/register tape tests.ts | tap-junit --output test-results/tape --name results.xml"
   },
   "nyc": {
     "all": true,
