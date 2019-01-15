@@ -38,7 +38,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "types": "./src/types.ts",
+  "types": "./build/",
   "dependencies": {
     "tslint": "^5.12.0",
     "typescript": "^3.2.2"
