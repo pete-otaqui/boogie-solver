@@ -39,10 +39,7 @@
   "author": "",
   "license": "ISC",
   "types": "./build/",
-  "dependencies": {
-    "tslint": "^5.12.0",
-    "typescript": "^3.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/tape": "^4.2.33",
@@ -55,6 +52,8 @@
     "tap-junit": "^2.1.0",
     "tape": "^4.9.2",
     "ts-node": "^7.0.1",
-    "tslint-config-prettier": "^1.17.0"
+    "tslint-config-prettier": "^1.17.0",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2"
   }
 }
