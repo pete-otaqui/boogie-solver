@@ -84,15 +84,15 @@ const trie = {
   qu: {
     i: {
       p: {
-        _: true,
+        _: true, // "qu-i-p" is a word
         s: {
-          _: true,
+          _: true, // "qu-i-p-s" is a word
         },
       },
       t: {
-        _: true,
+        _: true, // "qu-i-t" is a word
         s: {
-          _: true,
+          _: true, // "qu-i-t-s" is a word
         },
       },
     },
@@ -103,6 +103,7 @@ async function main() {
   const dice = [["qu", "i", "s"], ["x", "p", "t"]];
 
   const solution = await solveTrie(dice, trie);
+  console.log(solution.words); // ["quip", "quips", "quit", "quits"]
 }
 
 main();
