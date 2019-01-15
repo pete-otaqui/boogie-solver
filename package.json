@@ -11,7 +11,8 @@
     "lint": "tslint -p tsconfig.json",
     "pre-commit": "npm-run-all -s lint test build",
     "test": "nyc --reporter=lcov --require ts-node/register tape tests.ts | faucet; nyc report ---reporter=text",
-    "test:quick": "ts-node tests.ts"
+    "test:quick": "ts-node tests.ts",
+    "test:unit": "ts-node tests.ts | tap-junit --output test-results"
   },
   "nyc": {
     "all": true,
@@ -48,6 +49,7 @@
     "nyc": "^13.1.0",
     "prettier": "^1.15.3",
     "rimraf": "^2.6.3",
+    "tap-junit": "^2.1.0",
     "tape": "^4.9.2",
     "ts-node": "^7.0.1",
     "tslint-config-prettier": "^1.17.0"

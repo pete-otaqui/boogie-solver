@@ -2,3 +2,4 @@
 /coverage
 /build
 /.nyc_output
+/test-results

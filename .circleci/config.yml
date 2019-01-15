@@ -1,0 +1,27 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/boogie-solver
+    docker:
+      - image: circleci/node:dubnium
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: build
+          command: npm run build
+      - store_artifacts:
+          path: test-results/tap.xml
+      - store_artifacts:
+          path: ./coverage/lcov.info
+          prefix: test-results
+      - store_test_results:
+          path: test-results/tap.xml
