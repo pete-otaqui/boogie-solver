@@ -25,9 +25,9 @@ jobs:
           name: compile
           command: npm run build:compile
       - store_artifacts:
-          path: test-results/tap.xml
+          path: test-results/tape.xml
       - store_artifacts:
           path: ./coverage/lcov.info
           prefix: test-results
       - store_test_results:
-          path: test-results/tap.xml
+          path: test-results/tape.xml

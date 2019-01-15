@@ -1,7 +1,8 @@
 {
   "name": "boogie-solver",
   "version": "1.0.0",
-  "description": "",
+  "description": "Solver for boggle",
+  "repository": "https://github.com/pete-otaqui/boogie-solver.git",
   "main": "build/index.js",
   "scripts": {
     "build": "npm-run-all -s build:clean build:compile",
@@ -12,7 +13,7 @@
     "pre-commit": "npm-run-all -s lint test build",
     "test": "nyc --reporter=lcov --require ts-node/register tape tests.ts | faucet; nyc report ---reporter=text",
     "test:quick": "ts-node tests.ts",
-    "test:unit": "nyc --reporter=lcov --require ts-node/register tape tests.ts | tap-junit --output test-results"
+    "test:unit": "nyc --reporter=lcov --require ts-node/register tape tests.ts | tap-junit --output test-results --name tape.xml"
   },
   "nyc": {
     "all": true,
