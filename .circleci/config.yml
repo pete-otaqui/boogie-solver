@@ -16,8 +16,14 @@ jobs:
           paths:
             - ./node_modules
       - run:
-          name: build
-          command: npm run build
+          name: lint
+          command: npm run lint
+      - run:
+          name: test-unit
+          command: npm run test:unit
+      - run:
+          name: compile
+          command: npm run build:compile
       - store_artifacts:
           path: test-results/tap.xml
       - store_artifacts:
