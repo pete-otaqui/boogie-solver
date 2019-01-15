@@ -16,14 +16,14 @@ Then you can roll the dice and use the (promise-returning / async-friendly)
 `solve()` function to find the possilbe words in the board:
 
 ```js
-import { rollDice, solve } from "boggle-solver";
+import { rollDice, solveTrie, sowpodsTrie } from "boggle-solver";
 
 async function main() {
   const BOARD_WIDTH = 4;
   const BOARD_HEIGHT = 4;
 
   const dice = rolleDice(BOARD_WIDTH, BOARD_HEIGHT);
-  const solution = await solve(dice);
+  const solution = await solveTrie(dice, sowpodsTrie);
 
   console.log(solution.words.length); // unique words found
   console.log(solution.paths.length); // paths for words found, with positions
@@ -35,7 +35,7 @@ main();
 You can also provide your own set of "dice" in a 2-d array of rows:
 
 ```js
-import { solve } from "boggle-solver";
+import { solveTrie, sowpodsTrie } from "boggle-solver";
 
 async function main() {
   // provide a 4x4 grid of dice, in an array of row arrays.
@@ -46,7 +46,7 @@ async function main() {
     ["r", "e", "a", "s"],
   ];
 
-  const solution = await solve(dice);
+  const solution = await solveTrie(dice, sowpodsTrie);
 
   console.log(solution.words.length); // unique words found
   console.log(solution.paths.length); // paths for words found, with positions
@@ -61,20 +61,48 @@ Note that the set of dice is a specific one (although there have been multiple
 different versions of the original game). It expects one face to be "Qu" rather
 than just "Q" on it's own.
 
-### Specifying a word list
+### A note about the "trie" structures and TypeScript
 
-The default set of words is from
-[Sowpods](https://en.wikipedia.org/wiki/Sowpods). You can specify your own list
-when calling `solve()`:
+It's not possible under many circumstances to `import` a large tree structure
+with TypeScript - it uses _much_ more memory than a simple `require` of the same
+file.
+
+This limitation means that there a couple of extra hoops to jump through, both
+when using this library and also when developing for it.
+
+This library provides two different word tries (trees) - Sowpods and OED.
+
+If you want to provide your own trie, it should be structured based on the
+letters of each word, with a `{ _: true }` property for whole words.
 
 ```js
-import { solve } from "boogie-solver";
+import { solveTrie } from "boogie-solver";
+
+// manually construct a trie which contains the words quip, quips, quit, quits.
+// note that "qu" is considered a single die face.
+const trie = {
+  qu: {
+    i: {
+      p: {
+        _: true,
+        s: {
+          _: true,
+        },
+      },
+      t: {
+        _: true,
+        s: {
+          _: true,
+        },
+      },
+    },
+  },
+};
 
 async function main() {
-  const dice = [["a", "b", "c"], ["d", "e", "f"]];
-  const words = ["cab", "cafe", "deaf"];
+  const dice = [["qu", "i", "s"], ["x", "p", "t"]];
 
-  const solution = await solve(dice, words);
+  const solution = await solveTrie(dice, trie);
 }
 
 main();
@@ -102,13 +130,25 @@ types for the project - these are manually imported into the other files.
   the `./coverage/` directory, as well using `./.nyc_output/`.
 - `npm run test:quick` - just runs the native test scripts, really quickly and
   with better error messaging if you need it.
+- `npm run tries` - build trie structures from word lists in the
+  `/src/word-lists/` directory, only required if you add/update the word lists.
 
 ### Notes
 
-There are two main areas that could do with improvement:
+Areas that could do with improvement:
 
 1. Make the dice used more flexible, i.e. not always the same set. This also
-   requires the `solve()` routines to "know" what dice are being used, rather
-   than assuming that "qu" will always be the only double-letter die face.
-2. Provide a simple way for consumers to parallelize the "chunks" of words that
-   are solved, e.g. to use available cores.
+   requires the `solve()`, `solveTrie()` and other routines to "know" what dice
+   are being used, rather than assuming that "qu" will always be the only
+   double-letter die face.
+2. The trie building / parsing functions are a fairly naïve port from
+   https://github.com/pillowfication/pf-boggle and the same user's sowpods repo.
+   While these are efficient, there's quite a lot of mutation of things that is
+   very effective, but I would prefer to make more purely functional to match
+   the style of the rest of the codebase.
+3. With the trie-based solutions in place, the non-trie based parts should be
+   removed, since they are essentially cruft now.
+4. Would be nice to understand why TypeScript explodes when `import`ing the trie
+   json files, and if there is any way to make the compiler _not_ try and do
+   whatever parsing is causing that (and then we could just `import` them
+   normally and skip all the `require` and `cp` shenanigans).

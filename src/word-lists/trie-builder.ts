@@ -1,4 +1,3 @@
-import fs from "fs";
 import { DieFace, WordTrie } from "../types";
 
 export function buildTrie(wordlist: string[]): WordTrie {
@@ -58,16 +57,4 @@ export function verifyWordInTrie(word: string, trie: WordTrie) {
     }
   }
   return !!node._;
-}
-
-if (process.mainModule) {
-  // fs.readdirSync(__dirname)
-  //   .filter(fn => fn.match(/\.json$/))
-  //   .forEach(fn => {
-  //     const words = require(`${__dirname}/${fn}`);
-  //     const trie = buildTrie(words);
-  //     const trieJson = JSON.stringify(trie);
-  //     const trieFilename = fn.replace(/\.json$/, ".trie.json");
-  //     fs.writeFileSync(`${__dirname}/${trieFilename}`, trieJson);
-  //   });
 }

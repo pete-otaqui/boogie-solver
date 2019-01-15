@@ -52,37 +52,35 @@ export function solveTrieCell(
       return;
     }
     trieNode = trieNode[curFace] as WordTrie;
-    if (trieNode) {
-      const { x, y } = curCell;
-      const left = x > 0;
-      const right = x < board.width - 1;
-      const up = y > 0;
-      const down = y < board.height - 1;
-      const nextPathTrie = pathTrie.concat([curCell]);
-      if (up && left) {
-        _solve(getCell(board, x - 1, y - 1), trieNode, nextPathTrie);
-      }
-      if (up) {
-        _solve(getCell(board, x + 0, y - 1), trieNode, nextPathTrie);
-      }
-      if (up && right) {
-        _solve(getCell(board, x + 1, y - 1), trieNode, nextPathTrie);
-      }
-      if (left) {
-        _solve(getCell(board, x - 1, y + 0), trieNode, nextPathTrie);
-      }
-      if (right) {
-        _solve(getCell(board, x + 1, y + 0), trieNode, nextPathTrie);
-      }
-      if (down && left) {
-        _solve(getCell(board, x - 1, y + 1), trieNode, nextPathTrie);
-      }
-      if (down) {
-        _solve(getCell(board, x + 0, y + 1), trieNode, nextPathTrie);
-      }
-      if (down && right) {
-        _solve(getCell(board, x + 1, y + 1), trieNode, nextPathTrie);
-      }
+    const { x, y } = curCell;
+    const left = x > 0;
+    const right = x < board.width - 1;
+    const up = y > 0;
+    const down = y < board.height - 1;
+    const nextPathTrie = pathTrie.concat([curCell]);
+    if (up && left) {
+      _solve(getCell(board, x - 1, y - 1), trieNode, nextPathTrie);
+    }
+    if (up) {
+      _solve(getCell(board, x + 0, y - 1), trieNode, nextPathTrie);
+    }
+    if (up && right) {
+      _solve(getCell(board, x + 1, y - 1), trieNode, nextPathTrie);
+    }
+    if (left) {
+      _solve(getCell(board, x - 1, y + 0), trieNode, nextPathTrie);
+    }
+    if (right) {
+      _solve(getCell(board, x + 1, y + 0), trieNode, nextPathTrie);
+    }
+    if (down && left) {
+      _solve(getCell(board, x - 1, y + 1), trieNode, nextPathTrie);
+    }
+    if (down) {
+      _solve(getCell(board, x + 0, y + 1), trieNode, nextPathTrie);
+    }
+    if (down && right) {
+      _solve(getCell(board, x + 1, y + 1), trieNode, nextPathTrie);
     }
     if (trieNode._) {
       pathTries.push(pathTrie.concat([curCell]));

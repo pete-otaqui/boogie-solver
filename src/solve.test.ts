@@ -240,3 +240,35 @@ tape("solveTrieCell() solves by trie", t => {
   t.equal(paths.length, 2);
   t.end();
 });
+
+tape("solveTrieCell() solves by trie with qu", t => {
+  const board = liftDice([["qu", "i"], ["p", "t"]]);
+  const cell = board.cellGrid[0][0];
+  const trie: WordTrie = {
+    qu: {
+      i: {
+        p: { _: true },
+        t: { _: true },
+      },
+    },
+  };
+  const paths = solveTrieCell(cell, board, trie);
+  t.equal(paths.length, 2);
+  t.end();
+});
+
+tape("solveTrieCell() solves by trie with qu with invalid letters", t => {
+  const board = liftDice([["qu", "i"], ["p", "c"]]);
+  const cell = board.cellGrid[0][0];
+  const trie: WordTrie = {
+    qu: {
+      i: {
+        p: { _: true },
+        t: { _: true },
+      },
+    },
+  };
+  const paths = solveTrieCell(cell, board, trie);
+  t.equal(paths.length, 1);
+  t.end();
+});
