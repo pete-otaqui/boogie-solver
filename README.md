@@ -4,7 +4,9 @@
 
 A module for solving [Boggle](https://en.wikipedia.org/wiki/Boggle) boards.
 
-The project is written in Typescript, and provides definitions to consumers.
+The project is written in Typescript, and provides definitions to consumers. You
+can find a demonstration project that uses this package from npm at:
+https://github.com/pete-otaqui/boogie-solver-demo
 
 ## Usage
 
