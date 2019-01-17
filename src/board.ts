@@ -40,9 +40,17 @@ export function getCell(board: Board, x: number, y: number): BoardCell {
 }
 
 export function cellIsInList(cell: BoardCell, list: BoardCell[]): boolean {
-  return !!list.find(item => {
-    return item.x === cell.x && item.y === cell.y;
-  });
+  const { x, y } = cell;
+  let found = false;
+  let i = list.length;
+  while (i--) {
+    const item = list[i];
+    if (item.x === x && item.y === y) {
+      found = true;
+      i = 0;
+    }
+  }
+  return found;
 }
 
 export function getAdjacentCells(

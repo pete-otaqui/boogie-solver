@@ -1,12 +1,12 @@
 import { cellIsInList, getAdjacentCells, getCell, liftDice } from "./board";
 import { wordToDieFaces } from "./die";
+import { calcTimeDiff } from "./timer";
 import {
   Board,
   BoardCell,
   DieFace,
   Path,
   PathPair,
-  PathTrie,
   RolledDice,
   Solution,
   WordTrie,
@@ -17,6 +17,7 @@ export async function solveTrie(
   dice: RolledDice,
   trie: WordTrie,
 ): Promise<Solution> {
+  const start = process.hrtime();
   const board = liftDice(dice);
   let paths: Path[] = [];
   board.cells.forEach(cell => {
@@ -24,9 +25,12 @@ export async function solveTrie(
     paths = paths.concat(newPaths);
   });
   const words = Array.from(new Set(paths.map(p => p.word)));
+  const end = process.hrtime();
+  const time = calcTimeDiff(start, end);
   const solution: Solution = {
     board,
     paths,
+    time,
     words,
   };
   return Promise.resolve(solution);
@@ -37,7 +41,6 @@ export function solveTrieCell(
   board: Board,
   trie: WordTrie,
 ): Path[] {
-  const count = 0;
   const pathTries: BoardCell[][] = [];
   function _solve(
     curCell: BoardCell,
@@ -109,6 +112,7 @@ export async function solve(
   dice: RolledDice,
   wordlist: string[] = sowpods,
 ): Promise<Solution> {
+  const start = process.hrtime();
   const board: Board = liftDice(dice);
   let paths: Path[] = [];
   const chunkSize = 1000;
@@ -119,9 +123,12 @@ export async function solve(
     paths = paths.concat(chunkOfPaths);
   }
   const words = Array.from(new Set(paths.map(p => p.word)));
+  const end = process.hrtime();
+  const time = calcTimeDiff(start, end);
   return Promise.resolve({
     board,
     paths,
+    time,
     words,
   });
 }

@@ -21,6 +21,7 @@ export declare type Board = {
 export declare type Solution = {
   board: Board;
   paths: Path[];
+  time: number;
   words: string[];
 };
 
@@ -30,9 +31,6 @@ export declare type WordTrie = { [key in DieFace]?: WordTrie } & {
 
 export declare type RolledDice = DieFace[][];
 
-export declare type PathTrie = {
-  letters: BoardCell[];
-};
 export declare type Path = {
   letters: BoardCell[];
   faces: DieFace[];
