@@ -11,14 +11,14 @@ The project is written in Typescript, and provides definitions to consumers.
 First get the package:
 
 ```bash
-$ npm install boggle-solver
+$ npm install boogie-solver
 ```
 
 Then you can roll the dice and use the (promise-returning / async-friendly)
 `solve()` function to find the possilbe words in the board:
 
 ```js
-import { rollDice, solveTrie, sowpodsTrie } from "boggle-solver";
+import { rollDice, solveTrie, sowpodsTrie } from "boogie-solver";
 
 async function main() {
   const BOARD_WIDTH = 4;
@@ -37,7 +37,7 @@ main();
 You can also provide your own set of "dice" in a 2-d array of rows:
 
 ```js
-import { solveTrie, sowpodsTrie } from "boggle-solver";
+import { solveTrie, sowpodsTrie } from "boogie-solver";
 
 async function main() {
   // provide a 4x4 grid of dice, in an array of row arrays.
