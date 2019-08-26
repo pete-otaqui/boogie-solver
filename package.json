@@ -12,7 +12,7 @@
     "tries": "ts-node build-word-tries.ts",
     "demo": "ts-node demo.ts",
     "lint": "tslint -p tsconfig.json",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "pre-commit": "npm-run-all -s lint test build",
     "test": "nyc --reporter=lcov --require ts-node/register tape tests.ts | faucet; nyc report ---reporter=text",
     "test:quick": "ts-node tests.ts",
