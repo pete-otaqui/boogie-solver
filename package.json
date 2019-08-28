@@ -1,6 +1,6 @@
 {
   "name": "boogie-solver",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "Solver for boggle",
   "repository": "https://github.com/pete-otaqui/boogie-solver.git",
   "main": "build/index.js",
